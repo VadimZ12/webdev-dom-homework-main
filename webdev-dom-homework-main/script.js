@@ -36,12 +36,20 @@ const getComments = () => {
         isLiked: false,
       };
     });
+    
 
     let hidePreload = document.querySelector(".preload").style.display = "none";
     hideSeeAddComment();
     renderComments();
     addButtonElement.disabled = false;
-  });
+  })
+  .catch((error) => {
+    if (error.message === "Сервер упал") {
+        alert("Кажется, что-то пошло не так, попробуйте позже");
+    } else if (error.message === 'Failed to fetch') {
+        alert("Кажется,сломался интернет, попробуйте позже");
+    }
+  })
 };
 
 const hideSeeAddComment = () => {
@@ -231,6 +239,9 @@ function addComment() {
         } if (error.message === 'Failed to fetch') {
             alert("Кажется,сломался интернет, попробуйте позже");
         }
+
+        nameInputElement.value = name;
+        commentAreaElement.value = text;
       });
   }
   
