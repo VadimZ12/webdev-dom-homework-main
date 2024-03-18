@@ -39,7 +39,6 @@ const getComments = () => {
     
 
     let hidePreload = document.querySelector(".preload").style.display = "none";
-    hideSeeAddComment();
     renderComments();
     addButtonElement.disabled = false;
   })
@@ -55,15 +54,15 @@ const getComments = () => {
 const hideSeeAddComment = () => {
   addButtonElement.addEventListener("click", () => {
     addButtonElement.disabled = true;
-    commentsList.textContent = "Добавление комментария";
+    addFormElement.style.display = "none";
   });
   addButtonElement.disabled = false;
-  commentsList.textContent = "";
+  addFormElement.style.display = "block";
+  addFormElement.style.add = "add-form";
 }
 
 
 getComments();
-hideSeeAddComment();
 
 let comments = [];
 
@@ -138,11 +137,15 @@ const likeComments = () => {
 
 commentAreaElement.addEventListener("keyup", function(event) {
   if (event.key === 'Enter' && event.shiftKey) {
+    hideSeeAddComment();
     addComment();
   }
 });
 
-addButtonElement.addEventListener("click", addComment);
+addButtonElement.addEventListener("click", () => {
+  hideSeeAddComment();
+  addComment();
+});
 
 
 // Отрисовка комментариев 
@@ -176,14 +179,12 @@ const renderComments = () => {
 
 };
 
-getComments();
 renderComments();
 likeComments();
 answerOnComment();
 deleteComments();
 
 function addComment() {
-  const oldCommentsListHtml = commentsList.innerHTML;
   const name = nameInputElement.value.trim();
   const text = commentAreaElement.value.trim();
 
@@ -240,6 +241,7 @@ function addComment() {
             alert("Кажется,сломался интернет, попробуйте позже");
         }
 
+        addButtonElement.classList.remove("error");
         nameInputElement.value = name;
         commentAreaElement.value = text;
       });
