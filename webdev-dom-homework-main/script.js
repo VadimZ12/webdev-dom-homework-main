@@ -1,5 +1,5 @@
 const addButtonElement = document.getElementById("add-button");
-const addFormElement = document.getElementById("add-form");
+const addFormElement = document.querySelector(".add-form");
 const nameInputElement = document.getElementById("name-input");
 const commentAreaElement = document.getElementById("comment-area");
 const commentsList = document.getElementById("comments-list");
@@ -50,17 +50,6 @@ const getComments = () => {
     }
   })
 };
-
-const hideSeeAddComment = () => {
-  addButtonElement.addEventListener("click", () => {
-    addButtonElement.disabled = true;
-    addFormElement.style.display = "none";
-  });
-  addButtonElement.disabled = false;
-  addFormElement.style.display = "block";
-  addFormElement.style.add = "add-form";
-}
-
 
 getComments();
 
@@ -137,13 +126,11 @@ const likeComments = () => {
 
 commentAreaElement.addEventListener("keyup", function(event) {
   if (event.key === 'Enter' && event.shiftKey) {
-    hideSeeAddComment();
     addComment();
   }
 });
 
 addButtonElement.addEventListener("click", () => {
-  hideSeeAddComment();
   addComment();
 });
 
@@ -187,6 +174,8 @@ deleteComments();
 function addComment() {
   const name = nameInputElement.value.trim();
   const text = commentAreaElement.value.trim();
+  addFormElement.style.display = "none";
+  let loadAddComment = document.querySelector(".load-add-comment").style.display = "flex";
 
   const sanitizeHtml = (htmlString) => {
     return htmlString
@@ -237,14 +226,16 @@ function addComment() {
             alert("Имя и комментарий должны быть не короче 3 символов");
         }else if (error.message === "Сервер упал") {
             alert("Кажется, что-то пошло не так, попробуйте позже");
-        } if (error.message === 'Failed to fetch') {
-            alert("Кажется,сломался интернет, попробуйте позже");
         }
 
         addButtonElement.classList.remove("error");
         nameInputElement.value = name;
         commentAreaElement.value = text;
-      });
+      })
+      .finally(() => {
+        addFormElement.style.display = "flex";
+        let hideAddComment = document.querySelector(".load-add-comment").style.display = "none";
+      })
   }
   
   getComments();
