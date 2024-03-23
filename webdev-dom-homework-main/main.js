@@ -2,6 +2,7 @@ import { getApiComments, postApiComments } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { likeComments } from "./likecomments.js";
 import { answerOnComment } from "./answerOnComments.js";
+import { formattedDateTime, sanitizeHtml } from "./utils.js";
 
 
 
@@ -12,16 +13,7 @@ const addFormElement = document.querySelector(".add-form");
 const nameInputElement = document.getElementById("name-input");
 export const commentAreaElement = document.getElementById("comment-area");
 
-const formattedDateTime = (time) => {
-  let dateTime = new Date(time);
-  return dateTime.toLocaleString('ru-Ru', {
-    year: '2-digit',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
+
 
 // Получение списка комментариев через API с помощью метода GET
 const getComments = () => {
@@ -100,16 +92,6 @@ function addComment() {
   const text = commentAreaElement.value.trim();
   addFormElement.style.display = "none";
   let loadAddComment = document.querySelector(".load-add-comment").style.display = "flex";
-
-  const sanitizeHtml = (htmlString) => {
-    return htmlString
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-    .replaceAll("QUOTE_END", "</div>")
-  };
 
   if (name !== '' && text !== '') {
 
