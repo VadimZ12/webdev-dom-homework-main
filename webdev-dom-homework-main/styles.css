@@ -171,3 +171,9 @@ padding: 1em;
 .preload {
   display: block;
 }
+
+.load-add-comment {
+  display: none;
+  margin-top: 24px;
+  font-size: 18px;
+}

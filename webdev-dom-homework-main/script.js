@@ -1,5 +1,5 @@
 const addButtonElement = document.getElementById("add-button");
-const addFormElement = document.getElementById("add-form");
+const addFormElement = document.querySelector(".add-form");
 const nameInputElement = document.getElementById("name-input");
 const commentAreaElement = document.getElementById("comment-area");
 const commentsList = document.getElementById("comments-list");
@@ -36,26 +36,22 @@ const getComments = () => {
         isLiked: false,
       };
     });
+    
 
     let hidePreload = document.querySelector(".preload").style.display = "none";
-    hideSeeAddComment();
     renderComments();
     addButtonElement.disabled = false;
-  });
+  })
+  .catch((error) => {
+    if (error.message === "Сервер упал") {
+        alert("Кажется, что-то пошло не так, попробуйте позже");
+    } else if (error.message === 'Failed to fetch') {
+        alert("Кажется,сломался интернет, попробуйте позже");
+    }
+  })
 };
 
-const hideSeeAddComment = () => {
-  addButtonElement.addEventListener("click", () => {
-    addButtonElement.disabled = true;
-    commentsList.textContent = "Добавление комментария";
-  });
-  addButtonElement.disabled = false;
-  commentsList.textContent = "";
-}
-
-
 getComments();
-hideSeeAddComment();
 
 let comments = [];
 
@@ -134,7 +130,9 @@ commentAreaElement.addEventListener("keyup", function(event) {
   }
 });
 
-addButtonElement.addEventListener("click", addComment);
+addButtonElement.addEventListener("click", () => {
+  addComment();
+});
 
 
 // Отрисовка комментариев 
@@ -168,16 +166,16 @@ const renderComments = () => {
 
 };
 
-getComments();
 renderComments();
 likeComments();
 answerOnComment();
 deleteComments();
 
 function addComment() {
-  const oldCommentsListHtml = commentsList.innerHTML;
   const name = nameInputElement.value.trim();
   const text = commentAreaElement.value.trim();
+  addFormElement.style.display = "none";
+  let loadAddComment = document.querySelector(".load-add-comment").style.display = "flex";
 
   const sanitizeHtml = (htmlString) => {
     return htmlString
@@ -227,11 +225,17 @@ function addComment() {
         if (error.message === "Неверный запрос") {
             alert("Имя и комментарий должны быть не короче 3 символов");
         }else if (error.message === "Сервер упал") {
-            alert("Кажется, что-то пошло не так, попробуй позже");
-        } if (error.message === 'Failed to fetch') {
-            alert("Кажется,сломался интернет, попробуй позже");
+            alert("Кажется, что-то пошло не так, попробуйте позже");
         }
-      });
+
+        addButtonElement.classList.remove("error");
+        nameInputElement.value = name;
+        commentAreaElement.value = text;
+      })
+      .finally(() => {
+        addFormElement.style.display = "flex";
+        let hideAddComment = document.querySelector(".load-add-comment").style.display = "none";
+      })
   }
   
   getComments();
