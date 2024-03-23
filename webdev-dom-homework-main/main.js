@@ -1,8 +1,16 @@
+import { getApiComments, postApiComments } from "./api.js";
+import { renderComments } from "./renderComments.js";
+import { likeComments } from "./likecomments.js";
+import { answerOnComment } from "./answerOnComments.js";
+
+
+
+export let comments = [];
+
 const addButtonElement = document.getElementById("add-button");
 const addFormElement = document.querySelector(".add-form");
 const nameInputElement = document.getElementById("name-input");
-const commentAreaElement = document.getElementById("comment-area");
-const commentsList = document.getElementById("comments-list");
+export const commentAreaElement = document.getElementById("comment-area");
 
 const formattedDateTime = (time) => {
   let dateTime = new Date(time);
@@ -13,23 +21,15 @@ const formattedDateTime = (time) => {
     hour: '2-digit',
     minute: '2-digit'
   });
-}
-
-let urlApi = "https://wedev-api.sky.pro/api/v1/vadim-zolotov/comments";
+};
 
 // Получение списка комментариев через API с помощью метода GET
 const getComments = () => {
-  let fetchPromise = fetch(urlApi, {
-    method: "GET"
-  })
-  .then((response) => {
-    return response.json();
-  })
-  .then((responseData) => {
+  getApiComments().then((responseData) => {
     comments = responseData.comments.map((comment) => {
       return {
         userName: comment.author.name,
-        time: formattedDateTime(comment.date),
+        time: formattedDateTime(comment.date),  
         commentText: comment.text,
         id: comment.id,
         likes: comment.likes,
@@ -52,8 +52,6 @@ const getComments = () => {
 };
 
 getComments();
-
-let comments = [];
 
 // Удаление комментария 
 const deleteComments = () => {
@@ -81,48 +79,6 @@ function handleInputChange() {
   }
 }
 
-// Ответ на комментарий 
-const answerOnComment = () => {
-  const commentsElement = document.querySelectorAll(".comment");
-
-  for (const commentElement of commentsElement) {
-    commentElement.addEventListener("click", () => {
-      const commentIndex = commentElement.dataset.index
-      
-      author = comments[commentIndex].userName;
-      authorComment = comments[commentIndex].commentText;
-
-      commentAreaElement.value = `QUOTE_BEGIN ${author}: - \n"${authorComment}" QUOTE_END`;
-  
-  
-      renderComments();
-    });
-  }
-};
-
-const likeComments = () => {
-  const likeButtonsElement = document.querySelectorAll(".like-button")
-  
-  for (const likeButtonElement of likeButtonsElement) {
-    likeButtonElement.addEventListener("click", (event) => {
-      event.stopPropagation(); 
-      const likeIndex = likeButtonElement.dataset.index;
-
-      if (comments[likeIndex].isLiked) {
-        comments[likeIndex].likes--;
-        comments[likeIndex].isLiked = "";
-      } else {
-        comments[likeIndex].likes++;
-        comments[likeIndex].isLiked = "-active-like";
-      }
-
-      renderComments();
-    });
-  }
-
-};
-
-
 
 commentAreaElement.addEventListener("keyup", function(event) {
   if (event.key === 'Enter' && event.shiftKey) {
@@ -133,38 +89,6 @@ commentAreaElement.addEventListener("keyup", function(event) {
 addButtonElement.addEventListener("click", () => {
   addComment();
 });
-
-
-// Отрисовка комментариев 
-const renderComments = () => {
-  const commentsHtml = comments
-    .map((comment, index) => {
-      return `<li data-index="${index}" class="comment">
-      <div class="comment-header">
-        <div>${comment.userName}</div>
-        <div>${comment.time}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          ${comment.commentText}
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${comment.likes}</span>
-          <button data-index="${index}" class="like-button ${comment.isLiked}"></button>
-        </div>
-      </div>
-      </li>`
-    })
-    .join("");
-
-  commentsList.innerHTML = commentsHtml;
-
-  likeComments();
-  answerOnComment();
-
-};
 
 renderComments();
 likeComments();
@@ -189,26 +113,11 @@ function addComment() {
 
   if (name !== '' && text !== '') {
 
-    let fetchPromise = fetch(urlApi, 
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: sanitizeHtml(nameInputElement.value),
-          text: sanitizeHtml(commentAreaElement.value),
-          forceError: true,
-        })
-      })
-      .then((response) => {
-        console.log(response);
-        if (response.status === 201) {
-           return response.json();
-        }
-        if (response.status === 400) {
-            throw new Error("Неверный запрос"); 
-        }if (response.status === 500) {
-          throw new Error("Сервер упал");
-        }
-      })
+    postApiComments({
+      name: nameInputElement.value.trim(),
+      text: commentAreaElement.value.trim(),
+      sanitizeHtml,
+    })
       .then((responseData) => {
         return getComments();
       })
