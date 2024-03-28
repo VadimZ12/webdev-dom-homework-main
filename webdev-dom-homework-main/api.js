@@ -1,6 +1,7 @@
 import { commentAreaElement } from "./main.js";
 
-let urlApi = "https://wedev-api.sky.pro/api/v1/vadim-zolotov/comments";
+let urlApi = "https://wedev-api.sky.pro/api/v2/vadim-zolotov/comments";
+let userURL = "https://wedev-api.sky.pro/api/user";
 
 const nameInputElement = document.getElementById("name-input");
 
@@ -34,4 +35,14 @@ export function postApiComments({ name, text, sanitizeHtml }) {
             throw new Error("Сервер упал");
           }
         });
+}
+
+
+export function login({login, password}) {
+  return fetch(userURL, {
+      method: "POST"
+    })
+    .then((response) => {
+      return response.json();
+    });
 }

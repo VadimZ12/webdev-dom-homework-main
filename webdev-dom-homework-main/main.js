@@ -7,6 +7,9 @@ import { formattedDateTime, sanitizeHtml } from "./utils.js";
 
 
 export let comments = [];
+export const setComments = (newComments) => {
+  comments = newComments;
+}
 
 const addButtonElement = document.getElementById("add-button");
 const addFormElement = document.querySelector(".add-form");
@@ -18,7 +21,7 @@ export const commentAreaElement = document.getElementById("comment-area");
 // Получение списка комментариев через API с помощью метода GET
 const getComments = () => {
   getApiComments().then((responseData) => {
-    comments = responseData.comments.map((comment) => {
+    const newComments = responseData.comments.map((comment) => {
       return {
         userName: comment.author.name,
         time: formattedDateTime(comment.date),  
@@ -26,8 +29,17 @@ const getComments = () => {
         id: comment.id,
         likes: comment.likes,
         isLiked: false,
+        // author: {
+        //   id:
+        //   login:
+        //   name: 
+        // }
       };
     });
+
+    debugger;
+
+    setComments(newComments);
     
 
     let hidePreload = document.querySelector(".preload").style.display = "none";
@@ -55,8 +67,10 @@ const deleteComments = () => {
   });
 };
 
-nameInputElement.addEventListener('input', handleInputChange);
-commentAreaElement.addEventListener('input', handleInputChange);
+
+
+// nameInputElement.addEventListener('input', handleInputChange);
+// commentAreaElement.addEventListener('input', handleInputChange);
 // Проверка ввода заданного текста в поля "Имя" и "комментарий"
 function handleInputChange() {
   const name = nameInputElement.value.trim();
@@ -72,20 +86,17 @@ function handleInputChange() {
 }
 
 
-commentAreaElement.addEventListener("keyup", function(event) {
-  if (event.key === 'Enter' && event.shiftKey) {
-    addComment();
-  }
-});
+// commentAreaElement.addEventListener("keyup", function(event) {
+//   if (event.key === 'Enter' && event.shiftKey) {
+//     addComment();
+//   }
+// });
 
-addButtonElement.addEventListener("click", () => {
-  addComment();
-});
+// addButtonElement.addEventListener("click", () => {
+//   addComment();
+// });
 
 renderComments();
-likeComments();
-answerOnComment();
-deleteComments();
 
 function addComment() {
   const name = nameInputElement.value.trim();
