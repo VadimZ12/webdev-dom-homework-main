@@ -1,29 +1,13 @@
 import { comments } from "./main.js";
-import { likeComments } from "./likecomments.js";
-import { answerOnComment } from "./answerOnComments.js";
+import { likeComments } from "./likes.js";
+import { answerOnComment } from "./delay.js";
+import { renderLogin } from "./renderLogin.js";
 
 // Отрисовка комментариев 
 export const renderComments = () => {
     const containerElement = document.querySelector(".container");
-    const addForm = `<div class="add-form">
-    <input id="name-input"
-      type="text"
-      class="add-form-name"
-      placeholder="Введите ваше имя"
-    />
-    <textarea id="comment-area"
-      type="textarea"
-      class="add-form-text"
-      placeholder="Введите ваш коментарий"
-      rows="4"
-    ></textarea>
-    <div id="add-form" class="add-form-row">
-      <button id="add-button" disabled class="add-form-button error">Написать</button>
-      <button id="delete-button" class="add-form-delete-button">Удалить последний комментарий</button>
-    </div>
-  </div>`
 
-    const textLogin = `<p>Чтобы добавлять комментарии - <span class="text-login">авторизуйтесь!</span></p>`
+    const textLogin = `<p>Чтобы добавлять комментарии - <u class="text-login">авторизуйтесь!</u></p>`
     const commentsHtml = comments
     .map((comment, index) => {
       return `<li data-index="${index}" class="comment">
@@ -51,6 +35,11 @@ export const renderComments = () => {
   containerElement.innerHTML = `<div><ul id="comments-list" class="comments">
    ${commentsHtml}
   </ul> ${textLogin}</div>`;
+
+  const textLoginElement = document.querySelector(".text-login");
+  textLoginElement.addEventListener("click", () => {
+    renderLogin();
+  })
 
   likeComments();
   // answerOnComment();
