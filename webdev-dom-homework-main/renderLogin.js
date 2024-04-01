@@ -48,6 +48,13 @@ import { registrationLogin } from "./renderRegistration.js";
                     loginButtonElement.textContent = "Войти";
                     loginInputElement.value = "";
                     passwordInputElement.value = "";
+                }).catch((error) => {
+                    loginButtonElement.disabled = false;
+                    loginButtonElement.textContent = "Войти";
+                    if (error.message === "Неверный логин или пароль") {
+                        alert("Неверный логин или пароль")
+                    }
+                    console.warn(error);
                 });
             };
           handleLoginClick();
