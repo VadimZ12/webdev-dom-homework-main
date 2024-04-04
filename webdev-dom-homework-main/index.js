@@ -1,6 +1,7 @@
 //use strict";
-import { getComments} from './api.js'
-import { formatDateTime } from './date.js';
+import { getComments} from './api.js';
+import { format } from 'date-fns';
+// import { formatDateTime } from './date.js';
 import { renderComments } from './render.js';
 import { setToken } from './api.js';
 import {
@@ -28,10 +29,11 @@ export const fetchAndRenderComments = (comments) => {
     getComments({ token: setToken() })
     .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
+            const createDate = format(new Date(), 'yyyy-MM-dd hh.mm.ss')
             return {
                 id: comment.id,
                 name: comment.author.name,
-                date: formatDateTime(comment.date),
+                date: createDate,
                 text: comment.text,
                 likes: comment.likes,
                 isLiked: comment.isLikedlikes
