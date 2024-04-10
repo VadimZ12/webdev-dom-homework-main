@@ -1,6 +1,6 @@
-import { comments } from "./main.js";
+import { comments } from "./index.js";
 import { likeComments } from "./likes.js";
-import { answerOnComment } from "./delay.js";
+import { delay } from "./delay.js";
 import { renderLogin } from "./renderLogin.js";
 
 // Отрисовка комментариев 

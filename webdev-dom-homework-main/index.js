@@ -29,11 +29,11 @@ export const fetchAndRenderComments = (comments) => {
     getComments({ token: setToken() })
     .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
-            const createDate = format(new Date(), 'yyyy-MM-dd hh.mm.ss')
+            const createDate = format(comment.date(), 'yyyy-MM-dd hh.mm.ss')
             return {
                 id: comment.id,
                 name: comment.author.name,
-                date: createDate,
+                date: comment.date,
                 text: comment.text,
                 likes: comment.likes,
                 isLiked: comment.isLikedlikes
