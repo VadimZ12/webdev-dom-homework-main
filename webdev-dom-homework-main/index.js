@@ -33,7 +33,7 @@ export const fetchAndRenderComments = (comments) => {
             return {
                 id: comment.id,
                 name: comment.author.name,
-                date: comment.date,
+                date: createDate(),
                 text: comment.text,
                 likes: comment.likes,
                 isLiked: comment.isLikedlikes
