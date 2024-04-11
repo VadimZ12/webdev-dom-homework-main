@@ -13,7 +13,7 @@ export const renderComments = () => {
       return `<li data-index="${index}" class="comment">
       <div class="comment-header">
         <div>${comment.userName}</div>
-        <div>${comment.time}</div>
+        <div>${comment.date}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">

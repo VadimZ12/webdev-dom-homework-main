@@ -1,1 +1,6 @@
-export const createDate = format(new Date, 'yyyy-MM-dd hh.mm.ss')
+import { format } from "date-fns";
+
+export const createDate = (time) => {
+    let dateTime = new Date(time);
+    return format(dateTime, "yyyy-MM-dd hh.mm.ss")
+    };
