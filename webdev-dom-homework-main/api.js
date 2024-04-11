@@ -1,37 +1,94 @@
-import { commentAreaElement } from "./main.js";
+import { user } from "./index.js";
+const commentsUrl = "https://wedev-api.sky.pro/api/v2/vadim-zolotov/comments";
+const userUrL =     "https://wedev-api.sky.pro/api/user/login";
+const newUserUrl =  "https://wedev-api.sky.pro/api/user"
 
-let urlApi = "https://wedev-api.sky.pro/api/v1/vadim-zolotov/comments";
+export const setToken = () => {
+    const token = user ? `Bearer ${user.token}` : undefined;
+    return token;
+  };
+  
+export function getComments({ token}) {
+    return fetch(commentsUrl, {
+        method: "GET",
+        headers: {
+            Authorization: token,
+        }
+    }).then((response) => {
+       return response.json()
+    }); 
+};
 
-const nameInputElement = document.getElementById("name-input");
+export function postComment(name, text) {
+    return fetch(commentsUrl, {
+        method: "POST",
+        headers: {
+            Authorization: setToken(),
+        },
+        body: JSON.stringify({
+            name: name,
+            text: text,
+            // forceError: true,
+        })
+    }).then((response) => {
+        return response.json()
+    }); 
+};
 
-export function getApiComments() {
-    return fetch(urlApi, {
-        method: "GET"
-      })
-      .then((response) => {
+export function deleteComment({id}) {
+    return fetch(`${commentsUrl}/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: setToken(),
+        }
+    }).then((response) => {
+       return response.json()
+    }); 
+};
+
+export function likeComment({ id }) {
+    console.log(likeComment);
+    return fetch(`${commentsUrl}/${id}/toggle-like`, {
+        method: "POST",
+        headers: {
+            Authorization: setToken(),
+        }
+    }).then((response) => {
+       return response.json()
+    }); 
+};
+
+export function login({login, password }) {
+    return fetch(userUrL, {
+        method: "POST",
+        body: JSON.stringify({
+           login,
+           password,
+            forceError: true,
+        })
+    })
+        .then((response) => {
+        if (response.status === 400) {
+          throw new Error("Неверный логин или пароль");
+        }
         return response.json();
       });
-}
+    
+};
 
-export function postApiComments({ name, text, sanitizeHtml }) {
-    return fetch(urlApi, 
-        {
-          method: "POST",
-          body: JSON.stringify({
-            name: sanitizeHtml(nameInputElement.value),
-            text: sanitizeHtml(commentAreaElement.value),
-            forceError: true,
-          })
+export function registration({login, name, password }) {
+    return fetch(newUserUrl, {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            name,
+            password,
+            // forceError: true,
         })
-        .then((response) => {
-          console.log(response);
-          if (response.status === 201) {
-             return response.json();
-          }
-          if (response.status === 400) {
-              throw new Error("Неверный запрос"); 
-          }if (response.status === 500) {
-            throw new Error("Сервер упал");
-          }
-        });
-}
+    }).then((response) => {
+        if (response.status === 400) {
+          throw new Error("Такой пользователь уже существует");
+        }
+        return response.json();
+      });
+};

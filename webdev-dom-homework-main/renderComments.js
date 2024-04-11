@@ -1,16 +1,19 @@
-import { comments } from "./main.js";
-import { likeComments } from "./likecomments.js";
-import { answerOnComment } from "./answerOnComments.js";
+import { comments } from "./index.js";
+import { likeComments } from "./likes.js";
+import { delay } from "./delay.js";
+import { renderLogin } from "./renderLogin.js";
 
 // Отрисовка комментариев 
 export const renderComments = () => {
-    const commentsList = document.getElementById("comments-list");
+    const containerElement = document.querySelector(".container");
+
+    const textLogin = `<p>Чтобы добавлять комментарии - <u class="text-login">авторизуйтесь!</u></p>`
     const commentsHtml = comments
     .map((comment, index) => {
       return `<li data-index="${index}" class="comment">
       <div class="comment-header">
         <div>${comment.userName}</div>
-        <div>${comment.time}</div>
+        <div>${comment.date}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -27,9 +30,19 @@ export const renderComments = () => {
     })
     .join("");
 
-  commentsList.innerHTML = commentsHtml;
+    console.log(comments);
+
+  containerElement.innerHTML = `<div><ul id="comments-list" class="comments">
+   ${commentsHtml}
+  </ul> ${textLogin}</div>`;
+
+  const textLoginElement = document.querySelector(".text-login");
+  textLoginElement.addEventListener("click", () => {
+    renderLogin();
+  })
 
   likeComments();
-  answerOnComment();
+  // answerOnComment();
+  // deleteComments();
 
 };
